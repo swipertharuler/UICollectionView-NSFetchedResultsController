@@ -65,22 +65,28 @@
 		}
 		[self.deletedItemIndexPaths addObject:indexPath];
 		
-	} else if (type == NSFetchedResultsChangeMove) {
+    } else if (type == NSFetchedResultsChangeMove) {
+
+        if ([self.updatedItemIndexPaths containsObject:indexPath]) {
+            // if we were going to update, don't
+            [self.updatedItemIndexPaths removeObject:indexPath];
+        }
+        
 		if ([self.insertedSectionIndexes containsIndex:newIndexPath.section] == NO) {
 			[self.insertedItemIndexPaths addObject:newIndexPath];
 		}
 		if ([self.deletedSectionIndexes containsIndex:indexPath.section] == NO) {
 			[self.deletedItemIndexPaths addObject:indexPath];
 		}
-		
-	} else if (type == NSFetchedResultsChangeUpdate) {
-		if ([self.deletedSectionIndexes containsIndex:indexPath.section] || [self.deletedItemIndexPaths containsObject:indexPath]) {
-			// If we've already been told that we're deleting a section for this deleted row we skip it since it will handled by the section deletion.
-			return;
-		}
-		if ([self.updatedItemIndexPaths containsObject:indexPath] == NO)
-			[self.updatedItemIndexPaths addObject:indexPath];
-	}
+        
+    } else if (type == NSFetchedResultsChangeUpdate) {
+        if ([self.deletedSectionIndexes containsIndex:indexPath.section] || [self.deletedItemIndexPaths containsObject:indexPath]) {
+            // If we've already been told that we're deleting a section for this deleted row we skip it since it will handled by the section deletion.
+            return;
+        }
+        if ([self.updatedItemIndexPaths containsObject:indexPath] == NO)
+            [self.updatedItemIndexPaths addObject:indexPath];
+    }
 }
 
 /*
